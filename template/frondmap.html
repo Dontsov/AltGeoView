@@ -1,0 +1,105 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<head>
+
+    
+ 	 <script src="/static/js/OpenLayers/OpenLayers.js"></script>
+    <!--  <link rel="stylesheet" type="text/css" href="css/style.css" /> -->
+ 	 <style type="text/css">
+    	#mapdiv { 
+     		width: 700px; /* Ширина */
+     		height: 500px;
+		border: 1px solid;
+		/*background-color: 545454; b0b0b0;*/
+		/*background: -moz-linear-gradient(left, #545454, #f8f8f8); /* Firefox 3.6+ */ */
+    	}
+    	div.olControlMousePosition {
+    margin-bottom: 45px;
+    left: 3px;
+    display: block;
+    position: absolute;
+    font-family: Arial;
+    font-size: 15px;
+}
+  </style>
+  
+  
+<script type="text/javascript">
+        var map, layer;
+        
+        function init(){
+         var modname1 = "http://localhost/cgi-bin/mapserv?map=/home/diver/api/maps9.map&layer=temperatura&mode=map";
+          //  var maxResolution = 156543.0339;
+            var maxExtent = new OpenLayers.Bounds(7124447.41077, 3632749.14338, 11354588.0609, 8399737.88982);
+            var restrictedExtent = maxExtent.clone();
+            
+            var options = {
+                projection: new OpenLayers.Projection("EPSG:900913"),
+                displayProjection: new OpenLayers.Projection("EPSG:4326"),
+                numZoomLevels: 18,
+              //  maxResolution: maxResolution,
+                maxExtent: maxExtent,
+                restrictedExtent: restrictedExtent,
+                allOverlays: true,
+                units: 'degrees',
+        //  projection: new OpenLayers.Projection('WGS84'),// установка проекции
+            };
+
+    map = new OpenLayers.Map("map", options);//инициализация карты
+    var mapnik = new OpenLayers.Layer.OSM();//создание слоя карты
+    var modname = new OpenLayers.Layer.WMS("Map Data",
+    		modname1,
+		     {layers: 'temperatura',
+						  format: 'png24',      
+						  isBaseLayer: true,
+						  visibility: true
+						 });
+    
+    var kosmo1 = new OpenLayers.Layer.XYZ(
+        "Express Base",
+        "http://maps.kosmosnimki.ru/TileService.ashx?Request=gettile&layerName=04C9E7CE82C34172910ACDBF8F1DF49A&apikey=L5VW1QBBHJ&z=${z}&x=${x}&y=${y}",
+        {
+            sphericalMercator: true
+        }
+    );
+	var kosmo2 = new OpenLayers.Layer.XYZ(
+        "Spot5",
+        "http://maps.kosmosnimki.ru/TileService.ashx?Request=gettile&LayerName=ECAAA381886C4FDBBEB4C52B9E27A9AA&apikey=L5VW1QBBHJ&z=${z}&x=${x}&y=${y}",
+        {
+            sphericalMercator: true
+        }
+    );
+    //map.addLayer(mapnik);//добавление слоя
+    //map.addLayer(kosmo1);
+    //map.addLayer(kosmo2);
+    map.addLayer(modname);
+    map.setCenter(new OpenLayers.LonLat(82.6167, 52.7667) //(широта, долгота)
+          .transform(
+            new OpenLayers.Projection("EPSG:4326"), // переобразование в WGS 1984
+            new OpenLayers.Projection("EPSG:900913") // переобразование проекции
+          ), 10 // масштаб
+        ); 
+   // var layerMarkers = new OpenLayers.Layer.Markers("Markers");//создаем новый слой маркеров
+ 
+    //map.addLayer(layerMarkers);//добавляем этот слой к карте
+    map.addControl(new OpenLayers.Control.LayerSwitcher());
+    map.addControl(new OpenLayers.Control.Permalink());
+    map.addControl(new OpenLayers.Control.MousePosition());
+    //map.zoomToExtent(new OpenLayers.Bounds(64.739581, 31.740766, 102.659263, 60.102366));
+   /* map.events.register('click', map, function (e) {    
+        var size = new OpenLayers.Size(21, 25);//размер картинки для маркера
+        var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h); //смещение картинки для маркера
+        var icon = new OpenLayers.Icon('/Images/smilies.png', size, offset);//картинка для маркера
+        layerMarkers.addMarker(//добавляем маркер к слою маркеров
+            new OpenLayers.Marker(map.getLonLatFromViewPortPx(e.xy), //координаты вставки маркера
+            icon));//иконка маркера
+    }); //добавление событие клика по карте***********/
+
+        }
+    </script>
+</head>
+<body onload="init()">
+ <div id="map" class="smallmap"></div>
+ </body>
+</html>

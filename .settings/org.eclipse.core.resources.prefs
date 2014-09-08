@@ -1,0 +1,20 @@
+#Mon Sep 08 09:22:06 NOVT 2014
+eclipse.preferences.version=1
+encoding//core/clearnTrash.py=utf-8
+encoding//core/models.py=utf-8
+encoding//core/params/mapparams.py=utf-8
+encoding//core/params/sendmaptpl.py=utf-8
+encoding//template/__init__.py=utf-8
+encoding//test/bootle.py=utf-8
+encoding//test/core/testModel.py=utf-8
+encoding//test/treadinfo.py=utf-8
+encoding//workers/mod07/mod07_hdf2geotiff.py=utf-8
+encoding//workers/mod07/mod07heg.py=utf-8
+encoding/application.py=utf-8
+encoding/createparam.py=utf-8
+encoding/form.py=utf-8
+encoding/hdf2geotiff.py=utf-8
+encoding/hdftest.py=utf-8
+encoding/setup.py=utf-8
+encoding/testhdf.py=utf-8
+encoding/urls.py=utf-8

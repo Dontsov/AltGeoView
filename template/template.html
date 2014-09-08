@@ -1,0 +1,16 @@
+<html>
+     <head>
+          <title>{{ title }}</title>
+          {% block javascript %}
+     	 	<script type="text/javascript">
+          {% include "temp.js" %}
+     		</script>
+ 	 	  {% endblock %}
+     </head>
+     <body>
+ 
+          Hello.
+          {{ test }}
+ 
+     </body>
+</html>

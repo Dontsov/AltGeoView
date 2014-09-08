@@ -1,0 +1,128 @@
+<html><head>
+<!---<meta http-equiv="refresh" content="1; url=http://localhost/map">---->
+</head></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<head>
+<title>{{name_title}}</title>
+ 	<script src="http://localhost:8080/static/js/OpenLayers/OpenLayers.js"></script>
+ 	<script src="http://localhost:8080/static/js/map.js"></script>
+ 	<link rel="stylesheet" type="text/css" href="http://localhost:8080/static/css/main.css" /> 
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	<script type="text/javascript">
+     function init() {
+                var options = {
+                    div: "mapdiv",
+                    projection: "EPSG:3857",
+                    displayProjection: new OpenLayers.Projection("EPSG:4326"),
+                    maxExtent: new OpenLayers.Bounds(8565839.14,7289035.02, 9563800.98, 7000408.80),          
+                 	restrictedExtent: new OpenLayers.Bounds(8565839.14,7289035.02, 9563800.98, 7000408.80),
+                 	maxExtent:8565839.14,
+                 	minExtent:9563800.98,
+                    controls: [
+           	 	new OpenLayers.Control.Navigation(),
+             	new OpenLayers.Control.PanZoomBar(),
+             	new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+			 	new OpenLayers.Control.ScaleLine(),
+			 	new OpenLayers.Control.MousePosition(),
+             	new OpenLayers.Control.OverviewMap(),
+             	new OpenLayers.Control.KeyboardDefaults(),
+			 	new OpenLayers.Control.Graticule ()
+			 	]
+                };
+
+                var map = new OpenLayers.Map(options);
+                var osm = new OpenLayers.Layer.OSM()
+                var oam = new OpenLayers.Layer.XYZ(
+         	 	 	"Express Base",
+         		 	"http://maps.kosmosnimki.ru/TileService.ashx?Request=gettile&layerName=04C9E7CE82C34172910ACDBF8F1DF49A&apikey=L5VW1QBBHJ&z=${z}&x=${x}&y=${y}&CRS=EPSG:3857"
+     		 	);
+                altai = new OpenLayers.Layer.MapServer("Алтайский край",
+                    "http://localhost/cgi-bin/mapserv?MAP=/home/diver/geoserver/maps/map.map&LAYERS=all&MODE=MAP", 
+                    { layers: 'image',
+			   	 	  format: 'png24',      
+			   		  isBaseLayer: true,
+			   		  visibility: true, transparent: 'true'});
+			   		  
+			   	 var ban367 = new OpenLayers.Layer.MapServer("Ban367",
+                    "http://localhost/cgi-bin/mapserv?MAP=/home/diver/geoserver/maps/bands367.map&layer=367&MODE=MAP",
+                    { visibility: true, transparent: 'true' }
+ 					);
+			   	 
+			   	 
+			     var pois = new OpenLayers.Layer.Text( "My Points",
+                    { location:"http://localhost:8080/static/textfile.txt",
+                      projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+     				map.addLayer(pois);
+
+                extent = [8565839.14,7289035.02, 9563800.98, 7000408.80];
+                map.addLayers([osm, oam, altai, ban367]);
+                //map.zoomToExtent(new OpenLayers.Bounds(59.2289530630876442, 48.9969740071353286, 107.0024212413648002, 53.9999999949999889));
+                map.addControl( new OpenLayers.Control.LayerSwitcher() );
+                map.zoomToExtent(extent);
+                //map.setCenter(OpenLayers.Bounds(8565839.14,7289035.02, 9563800.98, 7000408.80), 7);
+                
+               
+                
+                
+            }
+        
+    </script>
+ </head>
+ <body onload="init()">
+  	<div id="container">
+    <div id="header">
+     	<div id="logo_asu"> 	
+     	 	<img src="http://localhost:8080/static/images/logo.png"" alt="АГУ" />
+     	</div>
+    </div>
+    <div id="content">
+     	<div id="getdata">
+     	<form method="post" action="http://map.local:81/map">
+ 			<select name="prod" size = "13" multiple>
+ 			 	<optgroup label="MOD09">
+  				 	<option value='mod09map'></option>
+                 	<option value= 'mod09_367'></option>
+                 	<option value= 'mod09_721'></option>
+  			 	 	<optgroup label="MOD07"></option>
+  				 	<option value= 'Total_Ozone'></option>
+  				 	<option value= 'Surface_Temperature'></option>
+  			</select>
+  			<input type=submit> 
+ 		</form>
+ 		</div>
+ 		<div id="mapdiv">
+               
+ 		 	
+ 		</div>
+ 	</div> &nbsp;
+ 	<div id="footer">
+ 	</div>
+ 	</div>
+</body>
+</html>

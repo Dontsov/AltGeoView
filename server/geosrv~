@@ -1,0 +1,59 @@
+server {
+    listen   80;
+    # access_log /var/log/nginx/test/access_log;
+    #index index.html;
+    server_name localhost;
+    location / {
+            root            /home/diver/geoserver;
+            uwsgi_pass      127.0.0.1:3031;
+            #uwsgi_pass unix:///var/run/uwsgi/app/geoserv/socket;
+            include         uwsgi_params;
+            
+    }
+    #location ~* ^.+\.(jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|mov) {
+    #    expires 30d;
+    #}
+    location ~ ^/maps/images.*\.jpg$ {
+        	root /home/diver/geoserver/maps/images;
+                deny all;
+        }
+
+    location ~* \.(?:ico|css|js|gif|jpe?g|png|svg)$ {
+        # Some basic cache-control for static files to be sent to the browser
+        root /home/diver/geoserver/maps/images;
+        expires max;
+        add_header Pragma public;
+        add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+    }
+    #  location /map/images \.(?:png|svg)$ {
+    #    # Some basic cache-control for static files to be sent to the browser
+    #    root /home/diver/geoserver/map;
+    #    expires max;
+    #    add_header Pragma public;
+    #    add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+    #}
+        
+  ## serve static files directly
+        location ~* ^.+\.(jpg|jpeg|gif|css|png|js|ico)$ {
+            root /home/diver/geoserver/maps/images;
+            access_log        off;
+            expires           30d;
+                    } 
+
+#MapServer
+        #location /cgi-bin {
+        #        fastcgi_pass   127.0.0.1:9999;
+        #        fastcgi_index  mapserv?*;
+        #        fastcgi_param  SCRIPT_FILENAME  /usr/lib/cgi-bin/mapserv$fastcgi_script_name;
+        #        include fastcgi_params;
+ 
+    #}
+        location /cgi-bin/ {
+            fastcgi_pass   127.0.0.1:9999;
+            fastcgi_index  mapserv?*;
+            fastcgi_param  SCRIPT_FILENAME  /usr/lib/cgi-bin/mapserv$fastcgi_script_name;
+            include fastcgi_params;
+ 
+}
+
+}

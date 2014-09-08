@@ -1,0 +1,48 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<head>
+<title>Кафедра Радиофизики и Теоретической физики, ФТФ, АлтГУ</title>
+ 	<link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+ 	<link rel="stylesheet" type="text/css" href="/static/css/datepicker.css" /> 
+ 	<link rel="stylesheet" type="text/css" href="/static/js/OpenLayers/theme/default/style.css" /> 
+ 	<script src="/static/js/OpenLayers/OpenLayers.js"></script>
+ 	<script src="/static/js/map.js"></script>	
+ </head>
+ <body>
+  	<div id="container">
+    <div id="header">
+     	<h3>Кафедра Радиофизики и Теоретической физики, ФТФ, АлтГУ</h3>
+    </div>
+    <div id="content">
+     	<div id="getdata">
+     	Форма запроса данных
+ 	 	<form method="post" action="http://map.local:81/map">
+ 			<select name="prod" size = “13” multiple>
+ 			 	Продукт
+ 			 	<optgroup label="MOD09">
+  				 	<option value='mod09map'>MOD09GA, естесственные цвета</option>
+                 	<option value= 'mod09_367'>MOD09GA, каналы 3, 6, 7</option>
+                 	<option value= 'mod09_721'>MOD09GA, каналы 7, 2, 1</option>
+  			 	 	<optgroup label="MOD07">
+  				 	<option value= 'Total_Ozone'>Распределение озона </option>
+  				 	<option value= 'Surface_Temperature'>Темпратура подст. поверх.</option>
+  			</select>
+            <br>
+            <!---Дата</br>--->
+			<!---<input id="date" name="date" value="" type="text"/>----> Данная опция в разработке
+  			<br>
+  			<!----Регион</br>---->
+  			<!----<input id="map" name="map" value="" type="text"/>---->
+			<br>
+			
+  			<input type=submit> 
+ 		</form>
+ 		</div>
+ 		<div id="mapdiv"></div>
+ 	</div> &nbsp;
+ 	<div id="footer">
+ 	 	Россия, Алтайский край, Барнаул.
+ 	</div>
+ 	</div>
+</body>
+</html>

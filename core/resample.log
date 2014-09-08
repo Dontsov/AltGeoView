@@ -1,0 +1,4 @@
+ Error: Failed to get environment variable MRTDATADIR. Not setting it may cause some problems later.
+Error: Check_envs_for_space : Environmental Variable Not Found
+     : One of the environment vaiables PWD, MRTDATADIR, PGSHOME, or MRTBINDIR has not been set or has an illegal space in it.
+

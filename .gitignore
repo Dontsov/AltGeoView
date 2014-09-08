@@ -1,0 +1,10 @@
+*.hdf
+*.pyc
+/data/
+*.txt
+/scanex/
+/programs/
+/cgi-bin/
+*.log 
+*.tif
+/maps/

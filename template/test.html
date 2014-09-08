@@ -1,0 +1,91 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<head>
+ 	 <script src="/static/js/OpenLayers/OpenLayers.js"></script>
+    <!--  <link rel="stylesheet" type="text/css" href="css/style.css" /> -->
+ 	 <style type="text/css">
+    	#mapdiv { 
+     		width: 700px; /* Ширина */
+     		height: 500px;
+		border: 1px solid;
+		/*background-color: 545454; b0b0b0;*/
+		/*background: -moz-linear-gradient(left, #545454, #f8f8f8); /* Firefox 3.6+ */ */
+    	}
+    	div.olControlMousePosition {
+    margin-bottom: 45px;
+    left: 3px;
+    display: block;
+    position: absolute;
+    font-family: Arial;
+    font-size: 15px;
+}
+  </style>
+</head>
+ <body>
+<!-- - 
+<select id="my_select" name="my_select">
+ <option value="mod07">one</option>
+ <option value="mod09">two</option>
+ <option value="mod14">three</option>
+</select> -->
+	<div id="mapdiv"></div>
+<script>
+
+/*
+var mod07 = "mod07.map&layer=prod&layer=altay&layer=altay-city";
+var mod09 = "mod09.map&layer=prod&layer=altay&layer=altay-city";
+var mod14 = "mod14.map&layer=prod&layer=altay&layer=altay-city";
+var targetValue; // переменная, куда при изменении выбора списка уйдет его value
+
+document.getElementById("my_select").onchange = function() {
+    targetValue = this.value;
+*/
+
+var altaimap = "http://localhost/cgi-bin/mapserv?map=/home/diver/geolocal/maps/altai.map&layer=altay&layer=altay-city";
+var modname1 = "http://localhost/cgi-bin/mapserv?map=/home/diver/geoserver/maps/test2777/test2777.map&layer=prod&layer=altay&layer=altay-city"; 
+    graticuleCtl = new OpenLayers.Control.Graticule({
+                    labelled: true,
+                    targetSize: 700
+                });
+    var map = new OpenLayers.Map('mapdiv',{
+                    controls: [
+                        new OpenLayers.Control.Navigation(),
+                        new OpenLayers.Control.PanZoomBar(),
+                        new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+			 			new OpenLayers.Control.ScaleLine(),
+			            new OpenLayers.Control.MousePosition(),
+                        new OpenLayers.Control.OverviewMap(),
+                        new OpenLayers.Control.KeyboardDefaults(),
+			  			new OpenLayers.Control.Graticule (),
+			  		],
+                    scales: [4000000, 1000000, 100000, 10000, 1000, 100, 10],
+                    numZoomLevels: 8
+                    
+                },
+                {
+                    units: 'degrees',
+                    projection: new OpenLayers.Projection('WGS84'),// установка проекции
+                  });
+    var bounds =  new OpenLayers.Bounds(62.2289530630876442, 49.9969740071353286, 120.0024212413648002, 59.9999999949999889);
+    var imageLayer = new OpenLayers.Layer.MapServer("Altai Region",
+    		             altaimap,
+					     {layers: 'image',
+						  format: 'png24',      
+						  isBaseLayer: false,
+						  visibility: false
+						 });
+ 	var modname = new OpenLayers.Layer.MapServer("Map Data",
+    		modname1,
+		     {layers: 'image',
+			  format: 'png24',      
+			  isBaseLayer: true,
+			  visibility: false
+			 });
+ 	map.addLayers([modname, imageLayer]);
+     	map.zoomToExtent(new OpenLayers.Bounds(59.2289530630876442, 48.9969740071353286, 107.0024212413648002, 53.9999999949999889));
+     	if (!map.getCenter()) map.zoomToMaxExtent();
+</script>
+</body>
+</html>
+
+ 

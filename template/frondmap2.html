@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+         <script src="/static/js/OpenLayers/OpenLayers.js"></script>
+     <script type="text/javascript" src='http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1'></script> 
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1251"/>
+    <script type="text/javascript">
+        var map;
+        function LoadMap() {
+            var maxExtent = new OpenLayers.Bounds(-20037508, -20037508, 20037508, 20037508);
+            var restrictedExtent = maxExtent.clone();
+            var maxResolution = 156543.0339;
+            var options = {
+                projection: new OpenLayers.Projection("EPSG:900913"),
+                displayProjection: new OpenLayers.Projection("EPSG:4326"),
+                numZoomLevels: 18,
+                maxResolution: maxResolution,
+                maxExtent: maxExtent,
+                restrictedExtent: restrictedExtent
+            };
+            map = new OpenLayers.Map('map', options);
+            // create Virtual Earth layers
+            var veroad = new OpenLayers.Layer.VirtualEarth("Virtual Earth Roads", { 'type': VEMapStyle.Road, sphericalMercator: true });
+            var veaer = new OpenLayers.Layer.VirtualEarth("Virtual Earth Aerial", { 'type': VEMapStyle.Aerial, hericalMercator: true });
+            var vehyb = new OpenLayers.Layer.VirtualEarth("Virtual Earth Hybrid", { 'type': VEMapStyle.Hybrid, sphericalMercator: true });
+            // create OSM layer
+            var mapnik = new OpenLayers.Layer.OSM();
+            // create OAM layer
+            var oam = new OpenLayers.Layer.XYZ("OpenAerialMap", "http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/${z}/${x}/${y}.png", { sphericalMercator: true });
+            // create OSM layer
+            var osmarender = new OpenLayers.Layer.OSM("OpenStreetMap (Tiles@Home)", "http://tah.openstreetmap.org/Tiles/tile/${z}/${x}/${y}.png");
+            map.addControl(new OpenLayers.Control.ScaleLine());
+            map.addControl(new OpenLayers.Control.MousePosition());
+            map.addLayers([ mapnik, veroad, veaer, vehyb]);
+            map.addControl(new OpenLayers.Control.LayerSwitcher());
+
+            var point0 = new OpenLayers.Geometry.Point(37.600328, 55.574624);
+            point0.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+            map.setCenter(new OpenLayers.LonLat(point0.x, point0.y), 9);
+			
+			//Создаем объект стиля отображения картинок. Указываем параметры ширены, высоты, сдвига по вертикале относительно точки, подпись(${} - это объявление параметра, можно выводить константу для всех точек), url к графику, размер шрифта. 
+var styleImage = new OpenLayers.Style(
+   {
+      graphicWidth: 21,  
+      graphicHeight: 25,  
+      graphicYOffset: -28, 
+      label: "${label}",   
+      externalGraphic: "http://www.openlayers.org/dev/img/marker.png",   
+      fontSize: 12 
+   });
+var stylePoint = new OpenLayers.Style(
+   { 
+      pointRadius: 5,
+      strokeColor: "red",
+      strokeWidth: 2,
+      fillColor: "lime",
+	  labelYOffset: -16,
+      label: "${label}",
+      fontSize: 16 
+   });
+//Создаем слой для точек. В свойстве styleMap указываем как отображать в обычном случае. Свойство select будет применено после выбора элемента. 
+var vectorPoint = new OpenLayers.Layer.Vector("Точки",
+{
+        styleMap: new OpenLayers.StyleMap(
+        { "default": stylePoint,
+          "select": { pointRadius: 30}
+        })
+    });
+//В отличие от слоя с точками, где выделение объекта взывает увеличение радиуса точки, на слое с картинками будет их поворот на 45 градусов
+
+var vectorImage = new OpenLayers.Layer.Vector("Картинки",
+{
+        styleMap: new OpenLayers.StyleMap(
+        { "default": styleImage,
+          "select": { rotation: 45}
+        })
+    });
+//Складываем слои на карту
+ map.addLayer(vectorImage );
+ map.addLayer(vectorPoint );
+ 
+ addPoint(37,55.5,'Точка 1','1',map.layers[5]);
+ addPoint(37,55.1,'Точка 2','2',map.layers[5]);
+  addImg(37,55.6,'Изображение 1','2',map.layers[4]);
+   addImg(37,55.9,'Изображение 2','2',map.layers[4]);
+   
+   addPoly('37 55.9;37.5 55.4;37 55','Полигон','1',map.layers[5]);
+   
+   
+var modef = new OpenLayers.Control.ModifyFeature(map.layers[5])
+modef.clickout = false;
+modef.toggle = false;
+modef.standalone = true;
+map.addControls([ modef]);
+modef.activate();
+modef.selectFeature(map.layers[5].features[2]);
+var centr = map.layers[5].features[2].geometry.getCentroid();
+map.setCenter(new OpenLayers.LonLat(centr.x, centr.y));
+   
+   
+   var selectControl = new OpenLayers.Control.SelectFeature([map.layers[4],map.layers[5]]);
+ map.addControls([selectControl],
+                {
+                    clickout: true, toggle: false,
+                    multiple: false, hover: false,
+                    toggleKey: "ctrlKey", 
+                    multipleKey: "shiftKey" 
+                });
+selectControl.activate();
+
+
+
+
+    map.layers[5].events.on(
+                {
+                    "featureselected": function (e) {
+                        var HTMLcontent;
+                        var point
+                        HTMLcontent = '<table style="width: 100%;"><tr><td>Информация об объекте</td></tr></table>';
+                        point = new OpenLayers.LonLat(e.feature.geometry.getCentroid().x, e.feature.geometry.getCentroid().y);
+					
+                      
+
+                        var popup = new OpenLayers.Popup.AnchoredBubble("SDVegetationInfo",
+                                        point,
+                                        new OpenLayers.Size(100, 100),
+                                        HTMLcontent,
+                                        null,
+                                        false);
+                        popup.opacity = 0.9;
+                        popup.autoSize = true;
+                        popup.setBackgroundColor("#bcd2bb");
+                        map.addPopup(popup, true);
+                    }
+                , "featureunselected": function (e) {
+
+                    setTimeout('if(map.popups.length - 1>-1){map.removePopup(map.popups[map.popups.length - 1]);}', 1000);
+                }
+                });
+
+
+        }
+function addImg(lon,lat,title,ident,layr){
+var ttt = new OpenLayers.LonLat(parseFloat(lon), parseFloat(lat));
+ttt.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+for (var k = 0; k < layr.features.length; k++) 
+{
+if(layr.features[k].attributes.ImgId==ident) {
+		layr.features[k].move(ttt);
+		layr.features[k].attributes.label=title;
+		return false;
+
+	}
+}
+var point0 = new OpenLayers.Geometry.Point(parseFloat(lon), parseFloat(lat));
+point0.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+layr.addFeatures(new OpenLayers.Feature.Vector(point0, { label: title, ImgId: ident }));
+                        
+
+}
+function addPoint(lon,lat,title,ident,layr){
+var ttt = new OpenLayers.LonLat(parseFloat(lon), parseFloat(lat));
+ttt.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+for (var k = 0; k < layr.features.length; k++) 
+{
+if(layr.features[k].attributes.PointId==ident) {
+		layr.features[k].move(ttt);
+		layr.features[k].attributes.label=title;
+		return false;
+
+	}
+}
+var point0 = new OpenLayers.Geometry.Point(parseFloat(lon), parseFloat(lat));
+point0.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+layr.addFeatures(new OpenLayers.Feature.Vector(point0, { label: title, PointId: ident }));
+                    
+
+}
+function addPoly(data,title,ident,layr){
+var featuress = Array();
+var coords = data.split(';');
+for (var i = 0; i < coords.length; i++) {
+                var d = coords[i].split(' ');
+                var ttt = new OpenLayers.LonLat(parseFloat(d[0]), parseFloat(d[1]));
+                var point0 = new OpenLayers.Geometry.Point(ttt.lon, ttt.lat);
+                point0.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+                featuress.push(point0);
+            }
+            var linearRing2 = new OpenLayers.Geometry.LinearRing(featuress);
+            var polygonFeature2 = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Polygon([linearRing2]), { label: title, PolyID: ident });
+            layr.addFeatures(polygonFeature2);
+	}
+
+
+
+    </script>
+</head>
+<body onload="LoadMap()">
+
+ <div id="map" style="position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px;"></div>
+</body>
+</html>
